@@ -1,25 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
+using MVC.Services.SmsService;
 using System.Diagnostics;
 
 namespace MVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ISmsService _smsService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ISmsService smsService)
         {
-            _logger = logger;
+            _smsService = smsService;
         }
 
         public IActionResult Index()
         {
+            var result = _smsService.Send(new SmsModel()
+            {
+                TelefonNo = "12345",
+                Mesaj = "home/index çalıştı"
+            });
             return View();
         }
 
         public IActionResult Privacy()
         {
+            var result = _smsService.Send(new SmsModel()
+            {
+                TelefonNo = "12345",
+                Mesaj = "home/index çalıştı"
+            });
             return View();
         }
 

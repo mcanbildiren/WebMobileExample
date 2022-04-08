@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
+using MVC.Services.EmailService;
 using MVC.Services.SmsService;
 using System.Diagnostics;
 

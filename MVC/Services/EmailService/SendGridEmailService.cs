@@ -3,7 +3,7 @@ using MVC.Services.EmailService;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-namespace Mvc101.Services.EmailService
+namespace MVC.Services.EmailService
 {
     public class SendGridEmailService : IEmailService
     {

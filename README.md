@@ -1,3 +1,3 @@
 # Web and Mobile Programming Example
-## SendGrid Mail Delivery
-## Outlook Mail Service
+* SendGrid Mail Delivery
+* Outlook Mail Service

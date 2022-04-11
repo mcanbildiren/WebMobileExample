@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
-using MVC.Services.EmailService;
 using MVC.Services.SmsService;
 using System.Diagnostics;
+using MVC.Services.EmailService;
 
 namespace MVC.Controllers
 {
@@ -13,14 +13,18 @@ namespace MVC.Controllers
         private readonly IWebHostEnvironment _appEnvironment;
         private readonly IServiceProvider _serviceProvider;
 
-        public HomeController(ISmsService smsService, IEmailService emailService, IWebHostEnvironment appEnvironment)
+        public HomeController(ISmsService smsService,
+            IEmailService emailService,
+            IWebHostEnvironment appEnvironment,
+            IServiceProvider serviceProvider)
         {
             _smsService = smsService;
             _emailService = emailService;
             _appEnvironment = appEnvironment;
+            _serviceProvider = serviceProvider;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int id = 0)
         {
             var result = _smsService.Send(new SmsModel()
             {
@@ -32,18 +36,22 @@ namespace MVC.Controllers
             Debug.WriteLine(wissenSms.EndPoint);
 
             #region Factory Design Pattern Uygulaması
+
             IEmailService emailService;
-            if (id % 2 =0)
+            if (id % 2 == 0)
             {
                 emailService = _serviceProvider.GetService<SendGridEmailService>();
+
             }
             else
             {
                 emailService = _serviceProvider.GetService<OutlookEmailService>();
             }
+
             #endregion
 
-            var fileStream = new FileStream(@$"{_appEnvironment.WebRootPath}\files\portre.jpeg", FileMode.Open);
+
+            //var fileStream = new FileStream(@$"{_appEnvironment.WebRootPath}\files\portre.jpeg", FileMode.Open);
 
             emailService.SendMailAsync(new MailModel()
             {
@@ -52,16 +60,17 @@ namespace MVC.Controllers
                     new EmailModel()
                     {
                         Name = "Wissen",
-                        Adress = "selamit859@yeafam.com"
+                        Adress = "site@wissenakademie.com"
                     }
                 },
                 Subject = "Index Açıldı",
                 Body = "Bu emailin body kısmıdır",
-                Attachs = new List<Stream>()
-                {
-                    fileStream
-                }
+                //Attachs = new List<Stream>()
+                //{
+                //    fileStream
+                //}
             });
+            //fileStream.Close();
 
             return View();
         }

@@ -1,5 +1,4 @@
 ﻿using MVC.Models;
-using MVC.Services.EmailService;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -9,7 +8,7 @@ namespace MVC.Services.EmailService
     public class OutlookEmailService : IEmailService
     {
         public string SenderMail => "wissen.akademie@outlook.com";
-        public string Password => "1-9x2+abc";
+        public string Password => "password";
         public string Smtp => "smtp-mail.outlook.com";
         public int SmtpPort => 587;
 

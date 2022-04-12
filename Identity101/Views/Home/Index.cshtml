@@ -1,0 +1,23 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <title>Anasayfa</title>
+</head>
+<body>
+    <div>
+        <h1>Hoşgeldiniz</h1>
+        @if (Context.User.Identity!.IsAuthenticated)
+        {
+            <a asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Login">Giriş Yap</a>
+        }
+
+    </div>
+</body>
+</html>

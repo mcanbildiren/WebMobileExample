@@ -15,7 +15,7 @@ namespace Identity101.Services.Email
         public SmtpEmailService(IConfiguration configuration)
         {
             _configuration = configuration;
-            this.EmailSettings = _configuration.GetSection("OutlookSettings").Get<EmailSettings>();
+            this.EmailSettings = _configuration.GetSection("GmailSettings").Get<EmailSettings>();
         }
         public EmailSettings emailSettings { get; }
 

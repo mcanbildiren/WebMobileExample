@@ -257,4 +257,44 @@ public class AccountController : Controller
             return View();
         }
     }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> Profile()
+    {
+        var user = await _userManager.FindByNameAsync(HttpContext.User.Identity!.Name);
+        var model = new UserProfileViewModel()
+        {
+            Email = user.Email,
+            Name = user.Name,
+            Surname = user.Surname
+        };
+        return View(model);
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> Profile(UserProfileViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+        var user = await _userManager.FindByNameAsync(HttpContext.User.Identity!.Name);
+        user.Name = model.Name;
+        user.Surname = model.Surname;
+        user.Email = model.Email;
+
+        //TODO: eğer mail değiştiyse kullanıcının rolünü pasife çekip tekrar aktivasyon maili gönderilmelidir.
+
+        var result = await _userManager.UpdateAsync(user);
+        if (result.Succeeded)
+        {
+            ViewBag.Message = "Güncelleme başarılı";
+        }
+        else
+        {
+            var message = string.Join("<br>", result.Errors.Select(x => x.Description));
+            ViewBag.Message = message;
+        }
+        return View(model);
+    }
 }

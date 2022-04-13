@@ -6,13 +6,13 @@ using System.Text;
 
 namespace Identity101.Services.Email
 {
-    public class OutlookEmailService : IEmailService
+    public class SmtpEmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
 
         public EmailSettings EmailSettings { get; }
 
-        public OutlookEmailService(IConfiguration configuration)
+        public SmtpEmailService(IConfiguration configuration)
         {
             _configuration = configuration;
             this.EmailSettings = _configuration.GetSection("OutlookSettings").Get<EmailSettings>();

@@ -45,7 +45,6 @@ public class AccountController : Controller
         }
     }
 
-
     [HttpGet("~/kayit-ol")]
     public IActionResult Register()
     {
@@ -283,7 +282,32 @@ public class AccountController : Controller
         user.Surname = model.Surname;
         user.Email = model.Email;
 
-        //TODO: eğer mail değiştiyse kullanıcının rolünü pasife çekip tekrar aktivasyon maili gönderilmelidir.
+        bool isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
+        if (isAdmin && user.Email != model.Email)
+        {
+            await _userManager.RemoveFromRoleAsync(user, Roles.User);
+            await _userManager.AddToRoleAsync(user, Roles.Passive);
+            user.EmailConfirmed = false;
+
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code },
+                Request.Scheme);
+
+            var emailMessage = new MailModel()
+            {
+                To = new List<EmailModel>
+                {
+                    new() {Adress = model.Email, Name = user.Name }
+                },
+                Body = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
+                Subject = "Confirm your email"
+            };
+            await _emailService.SendMailAsync(emailMessage);
+        }
+        user.Name = model.Name;
+        user.Surname = model.Surname;
+        user.Email = model.Email;
 
         var result = await _userManager.UpdateAsync(user);
         if (result.Succeeded)

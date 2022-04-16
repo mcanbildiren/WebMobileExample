@@ -12,6 +12,7 @@ builder.Services.AddSendGrid(options =>
 });
 //builder.Services.AddScoped<IEmailService, OutlookEmailService>();
 
+// Factory Design Pattern (Dependency Injection kullanmýyoruz)
 builder.Services.AddScoped<SendGridEmailService>().AddScoped<IEmailService, SendGridEmailService>(s => s.GetService<SendGridEmailService>());
 builder.Services.AddScoped<OutlookEmailService>().AddScoped<IEmailService, OutlookEmailService>(s => s.GetService<OutlookEmailService>());
 

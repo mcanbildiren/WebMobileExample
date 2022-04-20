@@ -45,13 +45,13 @@ public class AccountController : Controller
         }
     }
 
-    [HttpGet("~/Register")]
+    [HttpGet]
     public IActionResult Register()
     {
         return View();
     }
 
-    [HttpPost("~/Register")]
+    [HttpPost]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         if (!ModelState.IsValid)
@@ -75,26 +75,26 @@ public class AccountController : Controller
             var count = _userManager.Users.Count();
             result = await _userManager.AddToRoleAsync(user, count == 1 ? Roles.Admin : Roles.Passive);
 
-            //Email gönderme - Aktivasyon
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code },
-                protocol: Request.Scheme);
+            ////Email gönderme - Aktivasyon
+            //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code },
+            //    protocol: Request.Scheme);
 
-            var email = new MailModel()
-            {
-                To = new List<EmailModel>
-                {
-                    new EmailModel()
-                        { Adress = user.Email, Name = user.UserName }
-                },
-                Body =
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
-                Subject = "Confirm your email"
-            };
+            //var email = new MailModel()
+            //{
+            //    To = new List<EmailModel>
+            //    {
+            //        new EmailModel()
+            //            { Adress = user.Email, Name = user.UserName }
+            //    },
+            //    Body =
+            //        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
+            //    Subject = "Confirm your email"
+            //};
 
-            await _emailService.SendMailAsync(email);
-            //TODO: Login olma
+            //await _emailService.SendMailAsync(email);
+            ////TODO: Login olma
             return RedirectToAction("Login");
         }
 
@@ -144,13 +144,13 @@ public class AccountController : Controller
             return View(model);
         }
 
-        var user = await _userManager.FindByNameAsync(model.UserName);
+        //var user = await _userManager.FindByNameAsync(model.UserName);
 
-        var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);
+        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, true);
 
         if (result.Succeeded)
         {
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Profile", "Account");
         }
         else if (result.IsLockedOut)
         {
@@ -185,35 +185,35 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> ResetPassword(string email)
     {
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user == null)
-        {
-            ViewBag.Message = "Password change mail is sent to you.";
-        }
-        else
-        {
-            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = Url.Action("ConfirmResetPassword", "Account", new { userId = user.Id, code = code },
-                Request.Scheme);
+        //var user = await _userManager.FindByEmailAsync(email);
+        //if (user == null)
+        //{
+        //    ViewBag.Message = "Password change mail is sent to you.";
+        //}
+        //else
+        //{
+        //    var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+        //    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+        //    var callbackUrl = Url.Action("ConfirmResetPassword", "Account", new { userId = user.Id, code = code },
+        //        Request.Scheme);
 
-            var emailMessage = new MailModel()
-            {
-                To = new List<EmailModel>
-                {
-                    new EmailModel()
-                        { Adress = user.Email, Name = user.UserName }
-                },
-                Body =
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
-                Subject = "Reset Password"
-            };
+        //    var emailMessage = new MailModel()
+        //    {
+        //        To = new List<EmailModel>
+        //        {
+        //            new EmailModel()
+        //                { Adress = user.Email, Name = user.UserName }
+        //        },
+        //        Body =
+        //            $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
+        //        Subject = "Reset Password"
+        //    };
 
-            await _emailService.SendMailAsync(emailMessage);
+        //    await _emailService.SendMailAsync(emailMessage);
 
-            ViewBag.Message = "Password update mail is sent to you.";
-        }
-        return View();
+        //    ViewBag.Message = "Password update mail is sent to you.";
+        //}
+        return RedirectToAction("Login");
     }
 
     public IActionResult ConfirmResetPassword(string userId, string code)

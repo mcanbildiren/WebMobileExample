@@ -4,6 +4,8 @@ namespace AdminTemplate.ViewModels
 {
     public class UserProfileViewModel
     {
+
+
         [Required(ErrorMessage = "Name is required!")]
         [Display(Name = "Name")]
         [StringLength(50)]

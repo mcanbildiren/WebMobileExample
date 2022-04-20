@@ -4,34 +4,34 @@ namespace AdminTemplate.ViewModels
 {
     public class RegisterViewModel
     {
-        [Display(Name="Kullanıcı Adı")]
-        [Required(ErrorMessage="Kullanıcı adı alanı gereklidir.")]
+        [Display(Name="Username")]
+        [Required(ErrorMessage="Username is required!")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "Ad alanı gereklidir.")]
-        [Display(Name = "Ad")]
+        [Required(ErrorMessage = "Name is required!")]
+        [Display(Name = "Name")]
         [StringLength(50)]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Soyad alanı gereklidir.")]
-        [Display(Name = "Soyad")]
+        [Required(ErrorMessage = "Surname is required!")]
+        [Display(Name = "Surname")]
         [StringLength(50)]
         public string Surname { get; set; }
 
-        [Required(ErrorMessage = "E-posta alanı gereklidir.")]
+        [Required(ErrorMessage = "Email is required!")]
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Şifre alanı gereklidir.")]
-        [StringLength(100,MinimumLength =6, ErrorMessage = "Şifreniz minimum 6 karakterli olmalıdır!")]
-        [Display(Name = "Şifre")]
+        [Required(ErrorMessage = "Password is required!")]
+        [StringLength(100,MinimumLength =6, ErrorMessage = "Your password must be min. 6 charachters long!")]
+        [Display(Name = "Password")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Şifre tekrar alanı gereklidir.")]
+        [Required(ErrorMessage = "Password confirm is required!")]
         [DataType(DataType.Password)]
-        [Display(Name = "Şifre Tekrar")]
-        [Compare(nameof(Password), ErrorMessage = "Şifreler uyuşmuyor!")]
+        [Display(Name = "Password confirm")]
+        [Compare(nameof(Password), ErrorMessage = "Passwords don't match!")]
         public string ConfirmPassword { get; set; }
 
     }

@@ -1,0 +1,31 @@
+﻿@model LoginViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+<div>
+    <form asp-controller="Account" asp-action="Login" method="post">
+        <div asp-validation-summary="ModelOnly"></div>
+        <label asp-for="UserName"></label>
+        <input asp-for="UserName"/>
+        <span asp-validation-for="UserName"></span><br>
+        <label asp-for="Password"></label>
+        <input asp-for="Password"/>
+        <span asp-validation-for="Password"></span><br>
+        <label asp-for="RememberMe"></label>
+        <input asp-for="RememberMe"/>
+        <span asp-validation-for="RememberMe"></span><br>
+        <input type="submit" value="Giriş"/>
+        <a asp-controller="Account" asp-action="ResetPassword">Şifremi unuttum</a>
+    </form>
+</div>
+</body>
+</html>

@@ -51,25 +51,13 @@
                 <partial name="_sidebarPartial" />
 
                 <div class=" content-area">
-                    <div class="page-header">
-                        <h4 class="page-title">@ViewBag.Title</h4>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    @RenderBody()
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @RenderBody()
                 </div>
             </div>
         </div>
 
         <!--footer-->
         <partial name="_footerPartial" />
-        <!-- End Footer-->
 
     </div>
 

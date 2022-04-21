@@ -5,7 +5,7 @@
         <div>
             @if (@Context.User.Identity.IsAuthenticated)
             {
-                <div><img src="..\..\assets\images\faces\male\@Context.User.Identity.Name..jpeg" alt="user-img" class="img-circle"></div>
+                <div><img src="..\..\assets\images\faces\male\@(Context.User.Identity.Name+"").jpeg" alt="user-img" class="img-circle"></div>
                 <a asp-controller="Account" asp-action="Profile" aria-haspopup="true" aria-expanded="false">
                     <span class="font-weight-semibold">@Context.User.Identity.Name</span>
                 </a>

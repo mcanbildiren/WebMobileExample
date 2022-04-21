@@ -3,23 +3,21 @@
 <div class="user-profile">
     <div class="dropdown user-pro-body">
         <div>
-            @if (@Context.User.IsInRole(Roles.Admin) || @Context.User.IsInRole(Roles.Passive))
+            @if (@Context.User.Identity.IsAuthenticated)
             {
-                <div><img src="..\..\assets\images\faces\male\can.jpeg" alt="user-img" class="img-circle"></div>
+                <div><img src="..\..\assets\images\faces\male\@Context.User.Identity.Name..jpeg" alt="user-img" class="img-circle"></div>
                 <a asp-controller="Account" asp-action="Profile" aria-haspopup="true" aria-expanded="false">
-                    <span class="font-weight-semibold">@Model.Name @Model.Surname</span>
+                    <span class="font-weight-semibold">@Context.User.Identity.Name</span>
                 </a>
-                <br>
-                <span class="text-gray">Title</span>
-            }else
+                <br/>
+                <a asp-controller="Account" asp-action="Profile" class="btn btn-primary">Profile</a>
+            }
+            else
             {
                 <div><img src="..\..\assets\images\faces\user.jpeg" alt="user-img" class="img-circle"></div>
                 <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Login</a>
                 <a asp-controller="Account" asp-action="Register" class="btn btn-secondary">Register</a>
             }
-        </div>
-        <div class="mb-2">
-
         </div>
     </div>
 </div>

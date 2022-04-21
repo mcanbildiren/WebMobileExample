@@ -150,7 +150,7 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
-            return RedirectToAction("Profile", "Account");
+            return RedirectToAction("Index", "Home");
         }
         else if (result.IsLockedOut)
         {

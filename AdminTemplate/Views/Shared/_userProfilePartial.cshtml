@@ -1,22 +1,25 @@
 ﻿@model UserProfileViewModel
 
 <div class="user-profile">
-    <div class="dropdown user-pro-body">
+    <div class="dropdown mb-5">
         <div>
             @if (@Context.User.Identity.IsAuthenticated)
             {
-                <div><img src="..\..\assets\images\faces\male\@(Context.User.Identity.Name+"").jpeg" alt="user-img" class="img-circle"></div>
+                <div><img src="..\..\assets\images\faces\male\@(Context.User.Identity.Name+"").jpeg" alt="user-img" class="img-circle" width="100px"></div>
                 <a asp-controller="Account" asp-action="Profile" aria-haspopup="true" aria-expanded="false">
-                    <span class="font-weight-semibold">@Context.User.Identity.Name</span>
+                    <span class="font-weight-semibold mb-5">@Context.User.Identity.Name</span>
                 </a>
-                <br/>
+                <br />
                 <a asp-controller="Account" asp-action="Profile" class="btn btn-primary">Profile</a>
+                <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Logout</a>
             }
             else
             {
-                <div><img src="..\..\assets\images\faces\user.jpeg" alt="user-img" class="img-circle"></div>
+                <div><img src="..\..\assets\images\faces\user.jpeg" alt="user-img" class="img-circle mb-5" width="100px"></div>
                 <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Login</a>
-                <a asp-controller="Account" asp-action="Register" class="btn btn-secondary">Register</a>
+                <br />
+                <br />
+                <a asp-controller="Account" asp-action="Register" class="btn btn-secondary">Don't have an account?</a>
             }
         </div>
     </div>

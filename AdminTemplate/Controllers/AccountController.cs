@@ -177,13 +177,13 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public IActionResult ResetPassword()
+    public IActionResult EditProfile()
     {
         return View();
     }
 
     [HttpPost]
-    public async Task<IActionResult> ResetPassword(string email)
+    public async Task<IActionResult> EditProfile(string email)
     {
         //var user = await _userManager.FindByEmailAsync(email);
         //if (user == null)

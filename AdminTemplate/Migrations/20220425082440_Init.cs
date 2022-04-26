@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AdminTemplate.Migrations
 {
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -180,7 +180,7 @@ namespace AdminTemplate.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("665d1ee3-5edf-4a06-a59d-2b8097855002")),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("84cd8619-f381-40f8-bcf2-b79a648ed644")),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(8,2)", precision: 8, scale: 2, nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),

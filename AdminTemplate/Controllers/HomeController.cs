@@ -1,12 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AdminTemplate.Data;
+using AdminTemplate.ViewModels;
+using AdminTemplate.ViewModels.Dashboard;
+using Microsoft.AspNetCore.Mvc;
 
-namespace AdminTemplate.Controllers
+namespace AdminTemplate.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly MyContext _context;
+    // GET
+    public HomeController(MyContext context)
     {
-        public IActionResult Index()
+        _context = context;
+    }
+
+    public IActionResult Index()
+    {
+        var productReportViewModel = new ProductReportViewModel()
         {
-            return View();
-        }
+            Count = _context.Products.Count(),
+            Total = _context.Products.Sum(x => x.UnitPrice)
+        };
+
+        var model = new DashboardViewModels()
+        {
+            ProductReportViewModel = productReportViewModel
+        };
+        return View(model);
     }
 }

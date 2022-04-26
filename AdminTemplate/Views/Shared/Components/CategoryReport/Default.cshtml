@@ -1,0 +1,19 @@
+﻿@model List<CategoryReportViewModel>
+
+<div class="row justify-content-center">
+    <div class="col-10">
+        <div class="card">
+            <div class="card-header">
+                <h3>Category Report</h3>
+            </div>
+            <div class="card-body">
+                <ul>
+                    @foreach (var item in Model)
+                    {
+                        <li>@item.Name - @item.ProductCount</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

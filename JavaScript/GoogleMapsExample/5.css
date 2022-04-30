@@ -2,8 +2,8 @@
  * Always set the map height explicitly to define the size of the div element
  * that contains the map. 
  */
- #map {
-  height: 500px;
+#map {
+  height: 800px;
 }
 
 /* 
@@ -89,5 +89,5 @@ body {
 .list-group-item:hover {
   background-color: #4d90fe;
   color: white;
-  transition: .5s ease-out; 
+  transition: 0.5s ease-out;
 }

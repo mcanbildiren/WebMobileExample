@@ -1,9 +1,8 @@
-﻿using AdminTemplate.Models.Email;
+using AdminTemplate.Models.Email;
 
-namespace AdminTemplate.Services.Email
+namespace AdminTemplate.Services.Email;
+
+public interface IEmailService
 {
-    public interface IEmailService
-    {
-        Task SendMailAsync(MailModel model);
-    }
+    Task SendMailAsync(MailModel model);
 }

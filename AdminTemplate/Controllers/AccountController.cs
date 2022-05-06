@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Encodings.Web;
 using AdminTemplate.Models.Email;
 using AdminTemplate.Models.Identity;
@@ -29,7 +29,7 @@ public class AccountController : Controller
         _signInManager = signInManager;
         CheckRoles();
     }
-
+    
     private void CheckRoles()
     {
         foreach (string item in Roles.RoleList)
@@ -80,22 +80,22 @@ public class AccountController : Controller
         var count = _userManager.Users.Count();
         result = await _userManager.AddToRoleAsync(user, count == 1 ? Roles.Admin : Roles.Passive);
 
-        //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Scheme);
+        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Scheme);
 
-        //var emailMessage = new MailModel()
-        //{
-        //    To = new List<EmailModel> { new EmailModel()
-        //    {
-        //        Adress = user.Email,
-        //        Name = user.Name
-        //    }},
-        //    Body = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
-        //    Subject = "Confirm your email"
-        //};
+        var emailMessage = new MailModel()
+        {
+            To = new List<EmailModel> { new EmailModel()
+            {
+                Adress = user.Email,
+                Name = user.Name
+            }},
+            Body = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
+            Subject = "Confirm your email"
+        };
 
-        //await _emailService.SendMailAsync(emailMessage);
+        await _emailService.SendMailAsync(emailMessage);
 
 
 
@@ -193,23 +193,23 @@ public class AccountController : Controller
         var user = await _userManager.FindByEmailAsync(email);
         if (user != null)
         {
-            //var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            //var callbackUrl = Url.Action("ConfirmResetPassword", "Account", new { userId = user.Id, code }, Request.Scheme);
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Action("ConfirmResetPassword", "Account", new { userId = user.Id, code }, Request.Scheme);
 
 
-            //var emailMessage = new MailModel()
-            //{
-            //    To = new List<EmailModel> { new EmailModel()
-            //    {
-            //        Adress = user.Email,
-            //        Name = user.Name
-            //    }},
-            //    Body = $"You can chance your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
-            //    Subject = "Reset your password"
-            //};
+            var emailMessage = new MailModel()
+            {
+                To = new List<EmailModel> { new EmailModel()
+                {
+                    Adress = user.Email,
+                    Name = user.Name
+                }},
+                Body = $"You can chance your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
+                Subject = "Reset your password"
+            };
 
-            //await _emailService.SendMailAsync(emailMessage);
+            await _emailService.SendMailAsync(emailMessage);
         }
 
         ViewBag.Message = "Eğer mail adresiniz doğru ise şifre güncelleme yönergemiz gönderilmiştir";
@@ -315,26 +315,26 @@ public class AccountController : Controller
         var isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
         if (user.Email != model.UserProfileVM.Email && !isAdmin)
         {
-            //await _userManager.RemoveFromRoleAsync(user, Roles.User);
-            //await _userManager.AddToRoleAsync(user, Roles.Passive);
-            //user.EmailConfirmed = false;
+            await _userManager.RemoveFromRoleAsync(user, Roles.User);
+            await _userManager.AddToRoleAsync(user, Roles.Passive);
+            user.EmailConfirmed = false;
 
-            //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Scheme);
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Scheme);
 
-            //var emailMessage = new MailModel()
-            //{
-            //    To = new List<EmailModel> { new()
-            //    {
-            //        Adress = model.UserProfileVM.Email,
-            //        Name = model.UserProfileVM.Name
-            //    }},
-            //    Body = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
-            //    Subject = "Confirm your email"
-            //};
+            var emailMessage = new MailModel()
+            {
+                To = new List<EmailModel> { new()
+                {
+                    Adress = model.UserProfileVM.Email,
+                    Name = model.UserProfileVM.Name
+                }},
+                Body = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here </a>.",
+                Subject = "Confirm your email"
+            };
 
-            //await _emailService.SendMailAsync(emailMessage);
+            await _emailService.SendMailAsync(emailMessage);
         }
 
 
@@ -393,3 +393,4 @@ public class AccountController : Controller
         return RedirectToAction(nameof(Profile));
     }
 }
+

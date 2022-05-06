@@ -180,7 +180,7 @@ namespace AdminTemplate.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("84cd8619-f381-40f8-bcf2-b79a648ed644")),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("d8b0eb4a-ae10-4f4b-8cd0-16d4636b0fe9")),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(8,2)", precision: 8, scale: 2, nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),

@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "Kategori Sayfası";
+}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <h3 class="card-title">Kategori Listesi </h3>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="switch">
+                    <label class="form-check-label" for="switch">Kategori Ekle</label>
+                </div>
+            </div>
+            <div class="card-body">
+                <ul id="listCategory" class="list-group d-flex justify-content-between">
+                    <li class="list-group-item">Kategori Adı - Açıklama</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card" id="cardAddCategory" style="display: none">
+            <div class="card-header">
+                <h3 class="card-title">Kategori Ekle</h3>
+            </div>
+            <div class="card-body">
+                <form id="formCategory">
+                    <div class="mb-3 row">
+                        <label for="txtCategoryName" class="col-sm-2 col-form-label">Kategori Adı</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="txtCategoryName">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="txtDescription" class="col-sm-2 col-form-label">Açıklama</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="txtDescription">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <input type="submit" value="Kaydet" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+<script>
+    $(() => {
+        GetCategories();
+        $("#switch").on("change",() => {
+                if ($("#switch").is(":checked")) {
+                    $("#formCategory").trigger("reset");
+                    $("#cardAddCategory").slideDown(750);
+                } else {
+                    $("#cardAddCategory").slideUp(750);
+                }
+            });
+        $("#formCategory").submit(e => {
+            e.preventDefault();
+            var data = {
+                "name": $("#txtCategoryName").val(),
+                "description": $("#txtDescription").val()
+            }
+            // $.ajax({}).done(callbackfunc).fail(callbackfunc);
+            //ajax post
+            console.log(data);
+            $.ajax({
+                url: "../../api/categoryapi/add",
+                method: "POST",
+                data: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).done(data => {
+                alert(data.message);
+                //toastr kullanarak bilgilendirelim
+                $("#formCategory").trigger("reset");
+                GetCategories();
+            }).fail(response => {
+                //toastr kullanarak bilgilendirelim
+                console.log(response);
+            });
+
+        });
+    });
+
+    const GetCategories = () => {
+        var settings = {
+            "url": "../../api/categoryapi/all",
+            "method": "GET"
+        };
+
+        $.ajax(settings).done(function(response) {
+            console.log(response);
+            addToList(response);
+        });
+    };
+    const addToList = (categories) => {
+        const ul = $("#listCategory");
+        ul.empty();
+        categories.forEach(category => {
+            const li = $("<li>");
+            li.addClass("list-group-item");
+            li.html(`${category.name} - ${category.description}`);
+            //ul.append(li);
+            li.appendTo(ul);
+        });
+    }
+</script>
+}

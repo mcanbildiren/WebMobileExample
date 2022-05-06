@@ -10,8 +10,8 @@ public class UserProfileViewModel
     public string UserName { get; set; }
 
 
-    [Required(ErrorMessage = "Ad alanı gereklidir")]
-    [Display(Name = "Ad")]
+    [Required(ErrorMessage ="Ad alanı gereklidir")]
+    [Display(Name="Ad")]
     [StringLength(50)]
     public string Name { get; set; }
 

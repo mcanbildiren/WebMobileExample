@@ -2,9 +2,9 @@
     ViewBag.Title = "Kategori Sayfası";
 }
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12" id="cardListCategory">
         <div class="card">
-            <div class="card-header d-flex justify-content-between">
+            <div class="card-header">
                 <h3 class="card-title">Kategori Listesi </h3>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" role="switch" id="switch">
@@ -18,8 +18,8 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card" id="cardAddCategory" style="display: none">
+    <div class="col-md-6" id="cardAddCategory" style="display: none">
+        <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Kategori Ekle</h3>
             </div>
@@ -44,17 +44,50 @@
             </div>
         </div>
     </div>
+    <div class="col-md-6" id="cardUpdateCategory" style="display: none">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Kategori Güncelle</h3>
+            </div>
+            <div class="card-body">
+                <form id="formUpdateCategory">
+                    <div class="mb-3 row">
+                        <label for="txtUpdateCategoryName" class="col-sm-2 col-form-label">Kategori Adı</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="txtUpdateCategoryName">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="txtUpdateDescription" class="col-sm-2 col-form-label">Açıklama</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="txtUpdateDescription">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <input type="submit" value="Güncelle" class="btn btn-primary" />
+                    </div>
+                    <input type="hidden" id="txtUpdateCategoryId" />
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 @section Scripts {
 <script>
     $(() => {
         GetCategories();
-        $("#switch").on("change",() => {
+        $("#switch").on("change",
+            () => {
                 if ($("#switch").is(":checked")) {
+                    $("#cardListCategory").attr("class", "col-md-6");
+
                     $("#formCategory").trigger("reset");
                     $("#cardAddCategory").slideDown(750);
                 } else {
-                    $("#cardAddCategory").slideUp(750);
+                    $("#cardAddCategory").slideUp(750,
+                        () => {
+                            $("#cardListCategory").attr("class", "col-md-12");
+                        });
                 }
             });
         $("#formCategory").submit(e => {
@@ -65,7 +98,7 @@
             }
             // $.ajax({}).done(callbackfunc).fail(callbackfunc);
             //ajax post
-            console.log(data);
+            //console.log(data);
             $.ajax({
                 url: "../../api/categoryapi/add",
                 method: "POST",
@@ -74,18 +107,43 @@
                     "Content-Type": "application/json"
                 }
             }).done(data => {
-                alert(data.message);
-                //toastr kullanarak bilgilendirelim
+                //alert(data.message);
+                toastr["success"]("Kategori Ekleme", data.message);
                 $("#formCategory").trigger("reset");
                 GetCategories();
+                $("#txtCategoryName").focus();
             }).fail(response => {
-                //toastr kullanarak bilgilendirelim
-                console.log(response);
+                toastr["error"]("Kategori Ekleme", response.responseJSON.message);
             });
 
         });
-    });
 
+        $("#formUpdateCategory").submit(e => {
+            e.preventDefault();
+            var data = {
+                name: $("#txtUpdateCategoryName").val(),
+                description: $("#txtUpdateDescription").val(),
+                id: $("#txtUpdateCategoryId").val()
+            };
+
+            $.ajax({
+                url: "../../api/categoryapi/update/" + data.id,
+                method: "PUT",
+                data: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).done(data => {
+                toastr["success"]("Kategori Ekleme", data.message);
+                GetCategories();
+                $("#cardUpdateCategory").slideUp(750);
+                $("#formUpdateCategory").trigger("reset");
+                $("#cardListCategory").attr("class", "col-md-12");
+            }).fail(error => {
+                toastr["error"]("Kategori Ekleme", error.responseJSON.message);
+            });
+        });
+    });
     const GetCategories = () => {
         var settings = {
             "url": "../../api/categoryapi/all",
@@ -93,7 +151,7 @@
         };
 
         $.ajax(settings).done(function(response) {
-            console.log(response);
+            //console.log(response);
             addToList(response);
         });
     };
@@ -106,7 +164,88 @@
             li.html(`${category.name} - ${category.description}`);
             //ul.append(li);
             li.appendTo(ul);
+
+            const div = $("<div>");
+            div.css("float", "right");
+            const btnUpdate = $(`<input type='button' value='Güncelle' class='btn btn-primary' data-id='${category.id}' />`);
+
+            btnUpdate.on("click",
+                () => {
+                    const id = $(btnUpdate).attr("data-id");
+                    //apiden kategori detayını çek
+                    //api/categoryapi/detail/${id}
+                    $.ajax({
+                        url: `../../api/categoryapi/detail/${id}`,
+                        method: "GET"
+                    }).done((response) => {
+                        console.log(response);
+                        $("#txtUpdateCategoryName").val(response.name);
+                        $("#txtUpdateDescription").val(response.description);
+                        $("#txtUpdateCategoryId").val(response.id);
+                        $("#cardUpdateCategory").slideDown(750);
+                        $("#cardListCategory").attr("class", "col-md-6");
+
+                    }).fail((error) => {
+                        console.log(error.responseJSON.message);
+                    });
+                });
+
+            const btnDelete = $(`<input type='button' value='Sil' class='btn btn-danger' data-id='${category.id}' />`);
+
+            btnDelete.on("click",
+                () => {
+                    const id = $(btnDelete).attr("data-id");
+                    Swal.fire({
+                        icon: 'question',
+                        title: `${category.name} isimli kategori silinsin mi?`,
+                        showCancelButton: true,
+                        confirmButtonText: 'Sil',
+                        cancelButtonText: `İptal`,
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        //console.log(result);
+                        if (result.isConfirmed) {
+                            //ajax silme işlemi yapılacak
+
+                            $.ajax({
+                                url: `../../api/categoryapi/delete/${id}`,
+                                method: "DELETE"
+                            }).done(data => {
+                                console.log(data);
+                                toastr["success"]("Silindi", data.message);                    
+                                GetCategories();
+                            }).fail(data => {
+                                console.log(data);
+                            });
+                            //Swal.fire('Kopyalandı!', pickerDiv.innerHTML, 'success')
+                        } else {
+                            Swal.fire('İptal', 'Silme işlemi iptal edildi', 'info');
+                        }
+                    });
+                });
+
+            div.append(btnUpdate).append(btnDelete).appendTo(li);
+
         });
+    }
+
+
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
     }
 </script>
 }

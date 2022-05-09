@@ -6,10 +6,10 @@
 
         <li class="">
             <a href="#homeSubmenu" class="accordion-toggle wave-effect" data-toggle="collapse" aria-expanded="false">
-                <i class="fa fa-desktop mr-2"></i> Dashboard
+                <i class="fa fa-desktop mr-2"></i> CRUD İşlemleri
             </a>
             <ul class="collapse list-unstyled" id="homeSubmenu" data-parent="#accordion">
-                <li><a href="index-1.html">Dashboard 1</a></li>
+                <li><a asp-controller="Home" asp-action="Category">Kategori</a></li>
                 <li><a href="index2.html">Dashboard 2</a></li>
                 <li><a href="index3.html">Dashboard 3</a></li>
                 <li><a href="index4.html">Dashboard 4</a></li>
@@ -21,11 +21,12 @@
                 <i class="fa fa-user mr-2"></i> Profile
             </a>
             <ul class="collapse list-unstyled" id="profileSubmenu" data-parent="#accordion">
+                <li><a asp-controller="Account" asp-action="Login">Giriş Yap</a></li>
                 <li><a asp-controller="Account" asp-action="Profile">Profile</a></li>
                 <li><a href="index2.html">Dashboard 2</a></li>
                 <li><a href="index3.html">Dashboard 3</a></li>
                 <li><a href="index4.html">Dashboard 4</a></li>
-                <li><a href="index5.html">Dashboard 5</a></li>
+                <li><a asp-controller="Account" asp-action="Logout">Çıkış Yap</a></li>
             </ul>
         </li>
         <li class="">

@@ -29,7 +29,7 @@ public class AccountController : Controller
         _signInManager = signInManager;
         CheckRoles();
     }
-    
+
     private void CheckRoles()
     {
         foreach (string item in Roles.RoleList)
@@ -129,9 +129,13 @@ public class AccountController : Controller
 
 
     [HttpGet]
-    public IActionResult Login()
+    public IActionResult Login(string? returnUrl = null)
     {
-        return View();
+        var model = new LoginViewModel()
+        {
+            ReturnUrl = returnUrl
+        };
+        return View(model);
     }
 
     [HttpPost]
@@ -154,7 +158,13 @@ public class AccountController : Controller
                 user.Email
             }));
 
-            return RedirectToAction("Profile", "Account");
+            //model.ReturnUrl = string.IsNullOrEmpty(model.ReturnUrl) ? "~/" : model.ReturnUrl;
+
+            //model.ReturnUrl = model.ReturnUrl ?? Url.Action("Index", "Home");
+
+            model.ReturnUrl ??= Url.Content("~/");
+            
+            return LocalRedirect(model.ReturnUrl);
         }
         else if (result.IsLockedOut)
         {

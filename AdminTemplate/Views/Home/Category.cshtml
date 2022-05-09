@@ -2,9 +2,7 @@
     ViewBag.Title = "Kategori Sayfası";
 }
 <div class="row">
-    <div class="col-md-12" id="cardListCategory">
         <div class="card">
-            <div class="card-header">
                 <h3 class="card-title">Kategori Listesi </h3>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" role="switch" id="switch">
@@ -18,8 +16,6 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6" id="cardAddCategory" style="display: none">
-        <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Kategori Ekle</h3>
             </div>
@@ -48,7 +44,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Kategori Güncelle</h3>
-            </div>
+</div>
             <div class="card-body">
                 <form id="formUpdateCategory">
                     <div class="mb-3 row">
@@ -76,18 +72,12 @@
 <script>
     $(() => {
         GetCategories();
-        $("#switch").on("change",
-            () => {
                 if ($("#switch").is(":checked")) {
                     $("#cardListCategory").attr("class", "col-md-6");
 
                     $("#formCategory").trigger("reset");
                     $("#cardAddCategory").slideDown(750);
                 } else {
-                    $("#cardAddCategory").slideUp(750,
-                        () => {
-                            $("#cardListCategory").attr("class", "col-md-12");
-                        });
                 }
             });
         $("#formCategory").submit(e => {
@@ -98,7 +88,6 @@
             }
             // $.ajax({}).done(callbackfunc).fail(callbackfunc);
             //ajax post
-            //console.log(data);
             $.ajax({
                 url: "../../api/categoryapi/add",
                 method: "POST",
@@ -107,16 +96,14 @@
                     "Content-Type": "application/json"
                 }
             }).done(data => {
-                //alert(data.message);
-                toastr["success"]("Kategori Ekleme", data.message);
                 $("#formCategory").trigger("reset");
                 GetCategories();
                 $("#txtCategoryName").focus();
             }).fail(response => {
-                toastr["error"]("Kategori Ekleme", response.responseJSON.message);
             });
 
         });
+    });
 
         $("#formUpdateCategory").submit(e => {
             e.preventDefault();
@@ -151,7 +138,6 @@
         };
 
         $.ajax(settings).done(function(response) {
-            //console.log(response);
             addToList(response);
         });
     };

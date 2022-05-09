@@ -29,7 +29,7 @@ public class AccountController : Controller
         _signInManager = signInManager;
         CheckRoles();
     }
-    
+
     private void CheckRoles()
     {
         foreach (string item in Roles.RoleList)

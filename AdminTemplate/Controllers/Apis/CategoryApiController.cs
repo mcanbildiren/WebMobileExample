@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AdminTemplate.Controllers.Apis
 {
+    //[Route("api/[controller]/[action]/{id?}")]
     [ApiController]
+    public class CategoryApiController : BaseApiController
     {
         private readonly MyContext _context;
 
@@ -40,7 +42,7 @@ namespace AdminTemplate.Controllers.Apis
             {
                 model.CreatedUser = HttpContext.User.Identity!.Name;
                 _context.Categories.Add(model);
-                 _context.SaveChanges();
+                _context.SaveChanges();
                 return Ok(new
                 {
                     Success = true,

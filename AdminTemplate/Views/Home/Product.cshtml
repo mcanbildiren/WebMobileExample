@@ -26,9 +26,9 @@
             <div class="card-body">
                 <form id="formProduct">
                     <div class="mb-3 row">
-                        <label for="cmbCategory" class="col-sm-2 col-form-label">Fiyatı</label>
+                        <label for="cmbCategory" class="col-sm-2 col-form-label">Kategori</label>
                         <div class="col-sm-10">
-                            <select id="cmbCategory" class="custom-select">
+                            <select id="cmbCategory" class="custom-select" placeholder="Kategori seçiniz...">
                                 <option>Bir kategori seçiniz</option>
                             </select>
                         </div>
@@ -40,7 +40,7 @@
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="txtUnitPrice" class="col-sm-2 col-form-label">Fiyatı</label>
+                        <label for="txtUnitPrice" class="col-sm-2 col-form-label">Fiyat</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="txtUnitPrice">
                         </div>
@@ -52,11 +52,45 @@
             </div>
         </div>
     </div>
+    <div class="col-md-6" id="cardUpdateCategory" style="display: none">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Ürün Güncelle</h3>
+            </div>
+            <div class="card-body">
+                <form id="formUpdateProduct">
+                    <div class="mb-3 row">
+                        <label for="txtUpdateProductName" class="col-sm-2 col-form-label">Ürün Adı</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="txtUpdateProductName">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="txtUpdateUnitPrice" class="col-sm-2 col-form-label">Fiyat</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="txtUpdateUnitPrice">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="txtUpdateCategory" class="col-sm-2 col-form-label">Kategori</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="txtUpdateCategory">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <input type="submit" value="Güncelle" class="btn btn-primary" />
+                    </div>
+                    <input type="hidden" id="txtUpdateProductId" />
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
 <script>
     $(()=>{
+        getProducts();
         $("#switch").on("change", ()=>{
             console.log("değişti")
             if ($("#switch").is(":checked")) {
@@ -66,11 +100,12 @@
                 $("#cardAddProduct").slideDown(750);
             }
             else{
-
+                $("#cardAddProduct").slideUp(750, ()=> {
+                    $("#cardListProduct").attr("class", "col-md-12");
+                });
             }
 
         });
-        
         $("#formProduct").on("submit", (e)=>{
             e.preventDefault();
             var data = {
@@ -87,11 +122,24 @@
                 }
             }).done(data => {
                 console.log(data);
+                getProducts();
             }).fail(error => {
                 console.log(error);
             });
         })
     });
+
+    const getProducts = () => {
+        $.ajax({
+            url:"../../api/productapi/all",
+            method: "GET"
+        }).done(data => {
+            console.log(data);
+            addProductList(data);
+        }).fail(error => {
+            console.log(error);
+        });
+    }
 
     const getCategoryLookup = () => {
         $.ajax({
@@ -111,5 +159,65 @@
             $("#cmbCategory").append(`<option value="${category.id}">${category.name}</option>`);
         });
     };
+    const addProductList = (products) => {
+        $("#listProduct").empty();
+        products.forEach(product => {
+            $("#listProduct").append(`<li class="list-group-item">${product.name} - ${product.unitPrice} - ${product.category.name}</li>`);
+
+        });
+    };
+                li.appendTo(ul);
+    const div = $("<div>");
+            div.css("float", "right");
+            const btnUpdate = $(`<input type='button' value='Güncelle' class='btn btn-primary' data-id='${product.name}' />`);
+
+            btnUpdate.on("click",
+                () => {
+                    const id = $(btnUpdate).attr("data-id");
+                    $.ajax({
+                        url: `../../api/productapi/detail/${id}`,
+                        method: "GET"
+                    }).done((response) => {
+                        console.log(response);
+                        $("#txtUpdateProductName").val(response.name);
+                        $("#txtUpdateUnitPrice").val(response.unitPrice);
+                        $("#txtUpdateCategoryId").val(response.id);
+                        $("#cardUpdateProduct").slideDown(750);
+                        $("#cardListProduct").attr("class", "col-md-6");
+
+                    }).fail((error) => {
+                        console.log(error.responseJSON.message);
+                    });
+                });
+
+            const btnDelete = $(`<input type='button' value='Sil' class='btn btn-danger' data-id='${product.name}' />`);
+
+            btnDelete.on("click",
+                () => {
+                    const id = $(btnDelete).attr("data-id");
+                    Swal.fire({
+                        icon: 'question',
+                        title: `${product.name} isimli ürün silinsin mi?`,
+                        showCancelButton: true,
+                        confirmButtonText: 'Sil',
+                        cancelButtonText: `İptal`,
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `../../api/productapi/delete/${id}`,
+                                method: "DELETE"
+                            }).done(data => {
+                                console.log(data);
+                                toastr["success"]("Silindi", data.message);                    
+                                getProducts();
+                            }).fail(data => {
+                                console.log(data);
+                            });
+                        } else {
+                            Swal.fire('İptal', 'Silme işlemi iptal edildi', 'info');
+                        }
+                    });
+                });
+            div.append(btnUpdate).append(btnDelete).appendTo(li);
 </script>
 }

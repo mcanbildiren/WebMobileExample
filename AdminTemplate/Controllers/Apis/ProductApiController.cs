@@ -2,6 +2,7 @@
 using AdminTemplate.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AdminTemplate.Controllers.Apis
 {
@@ -18,10 +19,10 @@ namespace AdminTemplate.Controllers.Apis
         [HttpGet]
         public IActionResult All()
         {
-            var products = _context.Products.ToList();
+            var products = _context.Products.Include(x => x.Category).ToList();
             return Ok(products);
         }
-        
+
         [HttpGet]
         public IActionResult Detail(Guid id)
         {

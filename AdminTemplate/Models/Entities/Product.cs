@@ -8,5 +8,5 @@ public class Product : BaseEntity<Guid>
     public decimal UnitPrice { get; set; } = 0;
     public int CategoryId { get; set; }
 
-    public Category Category { get; set; }
+    public Category? Category { get; set; }
 }

@@ -26,7 +26,7 @@
             <div class="card-body">
                 <form id="formProduct">
                     <div class="mb-3 row">
-                        <label for="cmbCategory" class="col-sm-2 col-form-label">Fiyatı</label>
+                        <label for="cmbCategory" class="col-sm-2 col-form-label">Kategorisi</label>
                         <div class="col-sm-10">
                             <select id="cmbCategory" class="custom-select">
                                 <option>Bir kategori seçiniz</option>
@@ -52,86 +52,204 @@
             </div>
         </div>
     </div>
+    <div class="col-md-6" id="cardUpdateProduct" style="display: none">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Ürün Güncelle</h3>
+            </div>
+            <div class="card-body">
+                <form id="formUpdateProduct">
+                    <div class="mb-3 row">
+                        <label for="cmbCategory" class="col-sm-2 col-form-label">Kategorisi</label>
+                        <div class="col-sm-10">
+                            <select id="cmbUpdateCategory" class="custom-select">
+                                <option>Bir kategori seçiniz</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="txtUpdateProductName" class="col-sm-2 col-form-label">Ürün Adı</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="txtUpdateProductName">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="txtUpdateUnitPrice" class="col-sm-2 col-form-label">Fiyatı</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="txtUpdateUnitPrice">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <input type="submit" value="Güncelle" class="btn btn-primary" />
+                    </div>
+                    <input type="hidden" id="txtUpdateProductId" />
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
-<script>
-    $(()=>{
-        getProducts();
-        $("#switch").on("change", ()=>{
-            console.log("değişti")
-            if ($("#switch").is(":checked")) {
-                getCategoryLookup();
-                $("#cardListProduct").attr("class", "col-md-6");
-                $("#formProduct").trigger("reset");
-                $("#cardAddProduct").slideDown(750);
-            }
-            else{
-                $("#cardAddProduct").slideUp(750, ()=> {
-                    $("#cardListProduct").attr("class", "col-md-12");
-                });
-            }
+    <script>
+        $(() => {
+            getProducts();
+            $("#switch").on("change",
+                () => {
+                    console.log("değişti");
+                    if ($("#switch").is(":checked")) {
+                        getCategoryLookup();
+                        $("#cardListProduct").attr("class", "col-md-6");
+                        $("#formProduct").trigger("reset");
+                        $("#cardAddProduct").slideDown(750);
+                    } else {
+                        $("#cardAddProduct").slideUp(750,
+                            () => {
+                                $("#cardListProduct").attr("class", "col-md-12");
+                            });
+                    }
 
+                });
+            $("#formProduct").on("submit",
+                (e) => {
+                    e.preventDefault();
+                    var data = {
+                        categoryId: $("#cmbCategory").val(),
+                        name: $("#txtProductName").val(),
+                        unitPrice: $("#txtUnitPrice").val()
+                    };
+                    $.ajax({
+                        url: "../../api/productapi/add",
+                        method: "POST",
+                        data: JSON.stringify(data),
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    }).done(data => {
+                        console.log(data);
+                        toastr["success"]("Ürün Ekleme", data.message);
+                        getProducts();
+                        $("#formProduct").trigger("reset"); // formu temizle
+                    }).fail(error => {
+                        console.log(error);
+                    });
+                });
+
+            $("#formUpdateProduct").on("submit",
+                (e) => {
+                    e.preventDefault();
+                    var data = {
+                        categoryId: $("#cmbCategory").val(),
+                        name: $("#txtUpdateProductName").val(),
+                        unitPrice: $("#txtUpdateUnitPrice").val(),
+                        id: $("#txtUpdateProductId").val()
+                    };
+                    $.ajax({
+                        url: "../../api/productapi/update/"+data.id,
+                        method: "PUT",
+                        data: JSON.stringify(data),
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    }).done(data => {
+                        console.log(data);
+                        toastr["success"]("Ürün Güncelleme", data.message);
+                        getProducts();
+                        $("#cardUpdateProduct").slideUp(750,
+                            () => {
+                                $("#cardListProduct").attr("class", "col-md-12");
+                            });
+                    }).fail(error => {
+                        console.log(error);
+                    });
+                });
         });
-        $("#formProduct").on("submit", (e)=>{
-            e.preventDefault();
-            var data = {
-                categoryId: $("#cmbCategory").val(),
-                name: $("#txtProductName").val(),
-                unitPrice: $("#txtUnitPrice").val()
-            };
+
+        const getProducts = () => {
             $.ajax({
-                url:"../../api/productapi/add",
-                method: "POST",
-                data: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
+                url: "../../api/productapi/all",
+                method: "GET"
             }).done(data => {
                 console.log(data);
-                getProducts();
+                addProductList(data);
             }).fail(error => {
                 console.log(error);
             });
-        })
-    });
+        }
 
-    const getProducts = () => {
-        $.ajax({
-            url:"../../api/productapi/all",
-            method: "GET"
-        }).done(data => {
-            console.log(data);
-            addProductList(data);
-        }).fail(error => {
-            console.log(error);
-        });
-    }
+        const getCategoryLookup = () => {
+            $.ajax({
+                url: "../../api/categoryapi/all",
+                method: "GET"
+            }).done(data => {
+                console.log(data);
+                addCategoryLookup(data);
+            }).fail(error => {
+                console.log(error);
+            });
+        };
 
-    const getCategoryLookup = () => {
-        $.ajax({
-              url: "../../api/categoryapi/all",
-              method: "GET"
-        }).done(data => {
-            console.log(data);
-            addCategoryLookup(data);
-        }).fail(error =>{
-            console.log(error);
-        });
-    };
+        const addCategoryLookup = (categories) => {
+            $("#cmbCategory").empty();
+            $("#cmbUpdateCategory").empty();
+            categories.forEach(category => {
+                $("#cmbCategory").append(`<option value="${category.id}">${category.name}</option>`);
+                $("#cmbUpdateCategory").append(`<option value="${category.id}">${category.name}</option>`);
+            });
+        };
 
-    const addCategoryLookup = (categories) => {
-        $("#cmbCategory").empty();
-        categories.forEach(category => {
-            $("#cmbCategory").append(`<option value="${category.id}">${category.name}</option>`);
-        });
-    };
+        const addProductList = (products) => {
+            $("#listProduct").empty();
+            products.forEach(product => {
+                const li = $(`<li class="list-group-item">${product.name} - ${product.unitPrice} - ${product.category.name}</li>`);
 
-    const addProductList = (products) => {
-        $("#listProduct").empty();
-        products.forEach(product => {
-            $("#listProduct").append(`<li class="list-group-item">${product.name} - ${product.unitPrice} - ${product.category.name}</li>`);
-        });
-    };
-</script>
+                const div = $(`<div class="btn-group float-right"></div>`);
+                const btnUpdate = $(`<input type='button' class="btn btn-primary" value='Güncelle'>`);
+
+                const btnDelete = $(`<input type='button' class="btn btn-danger" value='Sil'>`);
+
+                btnDelete.on("click",
+                    () => {
+                        //swal ile silme onayı alınır
+                        $.ajax({
+                                url: "../../api/productapi/delete/" + product.id,
+                                method: "DELETE"
+                            })
+                            .done(data => {
+                                console.log(data);
+                                //toastr ile bilgi verilmeli
+                                toastr["success"]("Ürün Silme", data.message);                              
+                                getProducts();
+                            })
+                            .fail(error => {
+                                console.log(error);
+                                //toast ile hata verilmeli
+                            });
+                    });
+
+                btnUpdate.on("click",
+                    () => {
+                        getCategoryLookup();
+                        $("#cardListProduct").attr("class", "col-md-6");
+                        $("#formUpdateProduct").trigger("reset");
+                        $("#cardUpdateProduct").slideDown(750);
+                        $.ajax({
+                            url: "../../api/productapi/detail/" + product.id,
+                            method: "GET"
+                        }).done(data => {
+                            console.log(data);
+                            $("#txtUpdateProductId").val(data.id);
+                            $("#txtUpdateUnitPrice").val(data.unitPrice);
+                            $("#txtUpdateProductName").val(data.name);
+                            $("#cmbUpdateCategory").val(data.categoryId);
+                        }).fail(error => {
+                            console.log(error);
+                        });
+                        });
+
+                div.append(btnUpdate).append(btnDelete).appendTo(li);
+
+                $("#listProduct").append(li);
+            });
+        };
+    </script>
 }

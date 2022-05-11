@@ -4,6 +4,7 @@ using AdminTemplate.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using AdminTemplate.MappingProfiles;
 
 var builder = WebApplication.CreateBuilder(args);
 var con1 = builder.Configuration.GetConnectionString("con1");
@@ -48,6 +49,11 @@ builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
+//builder.Services.AddAutoMapper(options => options.AddMaps("AdminTemplate.MappingProfiles"));
+builder.Services.AddAutoMapper(options =>
+{
+    options.AddProfile<EntityMappingProfile>();
+});
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

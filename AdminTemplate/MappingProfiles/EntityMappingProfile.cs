@@ -12,6 +12,11 @@ namespace AdminTemplate.MappingProfiles
             //CreateMap<CategoryDto, Category>();
 
             //productdto
+            //CreateMap<Product, ProductDto>().ForMember(x => x.CategoryName, 
+            //    src => 
+            //        src.MapFrom(x=>x.Category.Name)
+            //        );
+            CreateMap<Product, ProductDto>().ReverseMap();
             
         }
     }

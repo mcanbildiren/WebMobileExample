@@ -138,7 +138,7 @@
                 (e) => {
                     e.preventDefault();
                     var data = {
-                        categoryId: $("#cmbCategory").val(),
+                        categoryId: $("#cmbUpdateCategory").val(),
                         name: $("#txtUpdateProductName").val(),
                         unitPrice: $("#txtUpdateUnitPrice").val(),
                         id: $("#txtUpdateProductId").val()
@@ -201,6 +201,7 @@
             $("#listProduct").empty();
             products.forEach(product => {
                 const li = $(`<li class="list-group-item">${product.name} - ${product.unitPrice} - ${product.category.name}</li>`);
+                //const li = $(`<li class="list-group-item">${product.name} - ${product.unitPrice} - ${product.categoryName}</li>`);
 
                 const div = $(`<div class="btn-group float-right"></div>`);
                 const btnUpdate = $(`<input type='button' class="btn btn-primary" value='Güncelle'>`);

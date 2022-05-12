@@ -1,5 +1,7 @@
 ﻿using AdminTemplate.Data;
+using AdminTemplate.Dtos;
 using AdminTemplate.Models.Entities;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,38 +12,45 @@ namespace AdminTemplate.Controllers.Apis
     public class ProductApiController : BaseApiController
     {
         private readonly MyContext _context;
+        private readonly IMapper _mapper;
 
-        public ProductApiController(MyContext context)
+        public ProductApiController(MyContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public IActionResult All()
         {
-            var products = _context.Products.Include(x => x.Category).ToList();
+            var products = _context.Products.Include(x => x.Category)
+                .ToList()
+                .Select(x => _mapper.Map<ProductDto>(x))
+                .ToList();
+
             return Ok(products);
         }
 
         [HttpGet]
         public IActionResult Detail(Guid id)
         {
-            var product = _context.Products.Find(id);
+            var product = _mapper.Map<ProductDto>(_context.Products.Find(id));
             return Ok(product);
         }
 
         [HttpPost]
-        public IActionResult Add(Product model)
+        public IActionResult Add(ProductDto model)
         {
             try
             {
-                model.CreatedUser = HttpContext.User.Identity!.Name;
-                _context.Products.Add(model);
+                var data = _mapper.Map<Product>(model);
+                data.CreatedUser = HttpContext.User.Identity!.Name;
+                _context.Products.Add(data);
                 _context.SaveChanges();
                 return Ok(new
                 {
                     Success = true,
-                    Message = $"{model.Name} isimli ürün kaydedildi"
+                    Message = $"{data.Name} isimli ürün kaydedildi"
                 });
             }
             catch (Exception ex)
@@ -55,7 +64,7 @@ namespace AdminTemplate.Controllers.Apis
         }
 
         [HttpPut]
-        public IActionResult Update(Guid id, Product model)
+        public IActionResult Update(Guid id, ProductDto model)
         {
             try
             {

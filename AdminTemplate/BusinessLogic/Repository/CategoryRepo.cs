@@ -4,11 +4,10 @@ using AdminTemplate.Models.Entities;
 
 namespace AdminTemplate.BusinessLogic.Repository
 {
-    public class CategoryRepo : RepositoryBase<Category, int>
+    public class CategoryRepo : RepositoryBase<Category,int>
     {
         public CategoryRepo(MyContext context) : base(context)
         {
-
         }
     }
 }

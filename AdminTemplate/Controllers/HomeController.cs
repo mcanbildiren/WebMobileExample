@@ -1,5 +1,6 @@
-using AdminTemplate.Data;
-using AdminTemplate.ViewModels;
+using AdminTemplate.BusinessLogic.Repository;
+using AdminTemplate.BusinessLogic.Repository.Abstracts;
+using AdminTemplate.Models.Entities;
 using AdminTemplate.ViewModels.Dashboard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,20 +9,18 @@ namespace AdminTemplate.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly MyContext _context;
+    //private readonly MyContext _context;
+    private readonly IRepository<Product, Guid> _productRepo;
+
     // GET
-    public HomeController(MyContext context)
+    public HomeController(IRepository<Product, Guid> productRepo)
     {
-        _context = context;
+        _productRepo = productRepo;
     }
 
     public IActionResult Index()
     {
-        var productReportViewModel = new ProductReportViewModel()
-        {
-            Count = _context.Products.Count(),
-            Total = _context.Products.Sum(x=>x.UnitPrice)
-        };
+        var productReportViewModel = (_productRepo as ProductRepo).GetProductReport();
         
         var model = new DashboardViewModels()
         {

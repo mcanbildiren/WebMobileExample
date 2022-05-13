@@ -1,8 +1,8 @@
-﻿using AdminTemplate.Data;
+﻿using AdminTemplate.BusinessLogic.Repository.Abstracts;
+using AdminTemplate.Data;
 using AdminTemplate.Dtos;
 using AdminTemplate.Models.Entities;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,29 +13,48 @@ namespace AdminTemplate.Controllers.Apis
     {
         private readonly MyContext _context;
         private readonly IMapper _mapper;
+        private readonly IRepository<Product, Guid> _productRepo;
 
-        public ProductApiController(MyContext context, IMapper mapper)
+        public ProductApiController(MyContext context, IMapper mapper, IRepository<Product, Guid> productRepo)
         {
             _context = context;
             _mapper = mapper;
+            _productRepo = productRepo;
         }
 
         [HttpGet]
         public IActionResult All()
         {
-            var products = _context.Products.Include(x => x.Category)
-                .ToList()
-                .Select(x => _mapper.Map<ProductDto>(x))
-                .ToList();
+            //var products = _context.Products.Include(x => x.Category)
+            //    .ToList()
+            //    .Select(x => _mapper.Map<ProductDto>(x))
+            //    .ToList();
 
-            return Ok(products);
+            var data = _productRepo.Get()
+                .Include(x=>x.Category)
+                .ToList()
+                .Select(x => _mapper.Map<ProductDto>(x));
+
+            return Ok(data);
         }
 
         [HttpGet]
         public IActionResult Detail(Guid id)
         {
-            var product = _mapper.Map<ProductDto>(_context.Products.Find(id));
-            return Ok(product);
+            try
+            {
+                var data = _productRepo.GetById(id);
+                if (data == null)
+                {
+                    return NotFound(new { Message = $"{data.Name} isimli ürün bulunamadı" });
+                }
+                var model = _mapper.Map<ProductDto>(data);
+                return Ok(model);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = $"Bir hata oluştu: {ex.Message}" });
+            }
         }
 
         [HttpPost]
@@ -45,8 +64,9 @@ namespace AdminTemplate.Controllers.Apis
             {
                 var data = _mapper.Map<Product>(model);
                 data.CreatedUser = HttpContext.User.Identity!.Name;
-                _context.Products.Add(data);
-                _context.SaveChanges();
+                //_context.Products.Add(data);
+                //_context.SaveChanges();
+                _productRepo.Insert(data);
                 return Ok(new
                 {
                     Success = true,
@@ -68,30 +88,31 @@ namespace AdminTemplate.Controllers.Apis
         {
             try
             {
-                var product = _context.Products.Find(id);
+                //var category = _context.Categories.Find(id);
+                var product = _productRepo.GetById(id);
+
                 if (product == null)
                 {
-                    return NotFound(new { Success = false, Message = "Ürün bulunamadı" });
+                    return NotFound(new { Message = $"{product.Name} isimli ürün bulunamadı" });
                 }
-                model.UpdatedUser = HttpContext.User.Identity!.Name;
-                model.UpdatedDate = DateTime.UtcNow;
                 product.Name = model.Name;
                 product.UnitPrice = model.UnitPrice;
                 product.CategoryId = model.CategoryId;
-                _context.SaveChanges();
+                product.CreatedDate = model.CreatedDate;
+                product.CreatedUser = model.CreatedUser;
+                product.UpdatedUser = HttpContext.User.Identity!.Name;
+                product.UpdatedDate = DateTime.UtcNow;
+
+                _productRepo.Update(product);
                 return Ok(new
                 {
                     Success = true,
-                    Message = $"{model.Name} isimli ürün güncellendi"
+                    Message = $"{product.Name} isimli ürün başarıyla güncellendi"
                 });
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    Success = false,
-                    Message = ex.Message
-                });
+                return BadRequest(new { Message = $"Bir hata oluştu: {ex.Message}" });
             }
         }
 
@@ -100,14 +121,12 @@ namespace AdminTemplate.Controllers.Apis
         {
             try
             {
-                var product = _context.Products.Find(id);
+                var product = _productRepo.GetById(id);
                 if (product == null)
                 {
                     return NotFound(new { Success = false, Message = "Ürün bulunamadı" });
                 }
-
-                _context.Products.Remove(product);
-                _context.SaveChanges();
+                _productRepo.Delete(product);
                 return Ok(new
                 {
                     Success = true,

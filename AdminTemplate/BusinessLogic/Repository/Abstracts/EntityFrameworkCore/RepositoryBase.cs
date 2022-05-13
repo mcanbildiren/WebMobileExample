@@ -1,11 +1,11 @@
-﻿using AdminTemplate.Data;
+﻿using System.Linq.Expressions;
+using AdminTemplate.Data;
 using AdminTemplate.Models.Entities.Abstracts;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace AdminTemplate.BusinessLogic.Repository.Abstracts.EntityFrameworkCore
 {
-    public abstract class RepositoryBase<TEntity,TKey>:IRepository<TEntity,TKey>
+    public abstract class RepositoryBase<TEntity, TKey> : IRepository<TEntity, TKey>
         where TKey : IEquatable<TKey>
         where TEntity : BaseEntity<TKey>
     {
@@ -17,12 +17,10 @@ namespace AdminTemplate.BusinessLogic.Repository.Abstracts.EntityFrameworkCore
             _context = context;
             _table = _context.Set<TEntity>();
         }
-
         public virtual IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate = null)
         {
             return predicate == null ? _table : _table.Where(predicate);
         }
-
         public virtual TEntity GetById(TKey id)
         {
             return _table.Find(id);
@@ -35,11 +33,12 @@ namespace AdminTemplate.BusinessLogic.Repository.Abstracts.EntityFrameworkCore
                 this.Save();
             return entity.Id;
         }
-        public virtual int Update(TEntity entity,bool isSaveLater = false)
+
+        public virtual int Update(TEntity entity, bool isSaveLater = false)
         {
             _table.Update(entity);
             if (!isSaveLater)
-                this.Save();
+                return this.Save();
             return 0;
         }
 
@@ -47,7 +46,7 @@ namespace AdminTemplate.BusinessLogic.Repository.Abstracts.EntityFrameworkCore
         {
             _table.Remove(entity);
             if (!isSaveLater)
-                this.Save();
+                return this.Save();
             return 0;
         }
 
